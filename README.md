@@ -1,46 +1,49 @@
-# MPTT — Multi-Purpose Talkie Terminal
+# MPTT — Mini Push To Talk
 
-> LoRa 对讲机 | STM32WLE5 + WM8960 | 2层 FR-4 PCB
+> LoRa 对讲机 v0.1 | STM32WLE5 + WM8960 | 2层 FR-4 35×55mm
+> 作者: vam-polf | 2026-06-07
+
+## 项目简介
+
+MPTT (Mini Push To Talk) 是一款基于 E77-400M22S (STM32WLE5) 和 WM8960 音频 Codec 的 LoRa 手持对讲机。单节锂电池供电，USB-C 充电，SMA 外接天线。
 
 ## 目录结构
 
 ```
-hardware/                        ← 当前版本 v2.5 硬件设计
-├── lora_waikie20260605.eprj2    EasyEDA Pro 工程文件
-├── BOM.md                       物料清单 (53项)
-├── SCHEMATIC.md                 原理图说明 (6大模块)
-├── PCB.md                       PCB布局说明
-└── NETLIST.md                   网络连接表 (40网络)
+hardware/                         ← 硬件设计
+├── lora_waikie_2026-06-05.epro2 EasyEDA Pro 工程文件
+├── mptt_schematic_v0.1.pdf      原理图 PDF 导出
+├── BOM.md                        物料清单 (53项)
+├── SCHEMATIC.md                  原理图模块说明
+├── PCB.md                        PCB 布局说明
+└── NETLIST.md                    网络连接表 (40网络)
 
-docs/                            ← 设计文档
-└── intercom_connection_analysis.md  早期方案分析
+docs/                             ← 设计文档
+└── DESIGN_v0.1.md                v0.1 完整硬件设计文档 (10章)
 
-reference/datasheets/            ← 芯片数据手册
+reference/datasheets/             ← 芯片数据手册
 ├── E77-400MBL-01-PIN.xlsx
 ├── E77-xxxM22S_Usermanual_CN_V1.4.pdf
-├── STM32WLE5.xlsx / .pdf
-└── INMP4411772809609773.pdf
-
-archive/                         ← 历史版本
-├── v1.0/                       初版 (lora_waikie.eprj2)
-└── v2.0_kicad/                 KiCad 探索期中间产物
-
-tools/                           ← 辅助脚本
-├── generate_pdf.bat / .py
+├── STM32WLE5.xlsx
+└── STM32WLE5XX.pdf
 ```
 
 ## 核心器件
 
 | 位号 | 型号 | 功能 |
 |------|------|------|
-| U1 | E77-400M22S | STM32WLE5 LoRa 模组 |
+| U1 | E77-400M22S | STM32WLE5 LoRa 模组, 400-470MHz |
 | U2 | WM8960CGEFL/RV | 音频 Codec + 1W D类功放 |
-| U3 | ME6211C33M5G-N | 3.3V LDO |
-| U4 | TP4056-42-ESOP8 | 锂电池充电 |
-| U5 | DW01A | 电池保护 |
-| U6 | 8205A | 双 N-MOSFET |
+| U3 | ME6211C33M5G-N | 3.3V 500mA LDO |
+| U4 | TP4056-42-ESOP8 | 锂电池充电管理 |
+| U5 | DW01A + U6 8205A | 电池保护 + MOSFET 开关 |
 
 ## 设计工具
 
 - **EDA**: 立创EDA专业版 V3.2.121
-- **生产**: JLCPCB (2层 FR-4, 35×55mm)
+- **PCB 生产**: JLCPCB (2层 FR-4, 35×55mm)
+- **SMT 贴片**: JLCPCB 标准型 (只贴顶层)
+
+## 许可证
+
+MIT License
