@@ -1,75 +1,46 @@
 # MPTT — Multi-Purpose Talkie Terminal
 
-> LoRa 对讲机 v2.x | EasyEDA Pro 设计 | 2层 FR-4 PCB
+> LoRa 对讲机 | STM32WLE5 + WM8960 | 2层 FR-4 PCB
 
-## 项目概述
-
-基于 STM32WLE5 (E77-400M22S) 和 WM8960 音频编解码器的 LoRa 手持对讲机。
-
-### 核心特性
-
-- **无线通信**: E77-400M22S LoRa 扩频模块, 400MHz 频段
-- **音频**: WM8960 立体声编解码 + 1W D类扬声器驱动
-- **电源**: 单节锂电池 (TP4056 充电 + DW01A 保护)
-- **接口**: USB-C 充电/数据, SMA 天线, SWD 调试, I2C/I2S 音频
-
-### 硬件架构
+## 目录结构
 
 ```
-┌──────────────────────────────────────────────────┐
-│                    E77-400M22S                     │
-│              (STM32WLE5 + LoRa RF)                │
-│                                                    │
-│  ┌──────────┐  I2S  ┌──────────┐                  │
-│  │ STM32WLE5│◄─────►│  WM8960  │──► Speaker      │
-│  │          │       │  Codec   │──► Mic          │
-│  │  LoRa RF │       └──────────┘                  │
-│  └──────────┘                                     │
-│       │                                            │
-│  ┌────┴────┐  ┌──────────┐  ┌──────────┐         │
-│  │  SMA    │  │  TP4056  │  │  DW01A   │         │
-│  │  Ant.   │  │  Charger │  │  Protect │         │
-│  └─────────┘  └────┬─────┘  └────┬─────┘         │
-│                    │              │                │
-│               USB-C (5V)     Li-Ion Battery       │
-└──────────────────────────────────────────────────┘
+hardware/                        ← 当前版本 v2.5 硬件设计
+├── lora_waikie20260605.eprj2    EasyEDA Pro 工程文件
+├── BOM.md                       物料清单 (53项)
+├── SCHEMATIC.md                 原理图说明 (6大模块)
+├── PCB.md                       PCB布局说明
+└── NETLIST.md                   网络连接表 (40网络)
+
+docs/                            ← 设计文档
+└── intercom_connection_analysis.md  早期方案分析
+
+reference/datasheets/            ← 芯片数据手册
+├── E77-400MBL-01-PIN.xlsx
+├── E77-xxxM22S_Usermanual_CN_V1.4.pdf
+├── STM32WLE5.xlsx / .pdf
+└── INMP4411772809609773.pdf
+
+archive/                         ← 历史版本
+├── v1.0/                       初版 (lora_waikie.eprj2)
+└── v2.0_kicad/                 KiCad 探索期中间产物
+
+tools/                           ← 辅助脚本
+├── generate_pdf.bat / .py
 ```
 
-### 规格参数
+## 核心器件
 
-| 参数 | 值 |
-|------|-----|
-| PCB 层数 | 2 层 (Top/Bottom) |
-| PCB 尺寸 | 35 × 55 mm (预估) |
-| 最小线宽/间距 | 6 mil |
-| 过孔 | 0.3mm 钻孔 / 0.6mm 外径 |
-| 电池 | 单节 3.7V Li-Ion (500mAh+) |
-| 射频 | 400MHz LoRa, SMA 天线座 |
-| 音频 | 1W D类功放, 驻极体麦克风 |
-
-### 项目文件
-
-| 文件 | 说明 |
-|------|------|
-| `lora_waikie20260605.eprj2` | EasyEDA Pro 工程文件 |
-| `BOM.md` | 物料清单 |
-| `SCHEMATIC.md` | 原理图设计说明 |
-| `PCB.md` | PCB 布局说明 |
-| `NETLIST.md` | 网络连接表 |
-
-### 设计工具
-
-- **EDA**: 立创EDA专业版 (EasyEDA Pro) V3.2.121
-- **PCB 生产**: JLCPCB
-- **SMT 贴片**: JLCPCB SMT (顶层)
-
-## 版本历史
-
-| 版本 | 日期 | 说明 |
+| 位号 | 型号 | 功能 |
 |------|------|------|
-| v2.5 | 2026-06-07 | 当前版本: 完整原理图+PCB布局 |
-| v1.0 | 2026-05 | 初版 PCB, JLCPCB 已下单 |
+| U1 | E77-400M22S | STM32WLE5 LoRa 模组 |
+| U2 | WM8960CGEFL/RV | 音频 Codec + 1W D类功放 |
+| U3 | ME6211C33M5G-N | 3.3V LDO |
+| U4 | TP4056-42-ESOP8 | 锂电池充电 |
+| U5 | DW01A | 电池保护 |
+| U6 | 8205A | 双 N-MOSFET |
 
-## 许可证
+## 设计工具
 
-MIT License
+- **EDA**: 立创EDA专业版 V3.2.121
+- **生产**: JLCPCB (2层 FR-4, 35×55mm)
