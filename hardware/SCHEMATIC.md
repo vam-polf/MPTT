@@ -14,7 +14,7 @@ STM32WLE5 内置 LoRa 射频的单片机模组。负责:
 - ADC 电池电压采样
 
 关键引脚连接:
-- PA4/PA5/PA6/PA7 → I2S 到 WM8960
+- PA3(TIM2_CH4 MCLK)/PA8(I2S2_CK)/PA9(I2S2_WS)/PA10(I2S2_SD) → I2S 到 WM8960
 - PB6/PB7 → I2C 到 WM8960
 - PB0 → PTT 按键
 - PA0 → BAT_ADC

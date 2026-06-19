@@ -3,3 +3,33 @@ Thumbs.db
 .DS_Store
 ~$*
 *.lck
+
+# Build outputs
+firmware/build/
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+
+# Backup directories
+firmware_backup_*/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp.gitignore.backup
