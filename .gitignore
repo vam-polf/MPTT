@@ -33,3 +33,4 @@ __pycache__/
 # Temporary files
 *.tmp
 *.temp.gitignore.backup
+firmware_test/
