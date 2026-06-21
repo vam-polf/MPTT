@@ -44,13 +44,15 @@
 
 ## 数字音频 (I2S)
 
-| 网络 | 方向 | 功能 |
-|------|------|------|
-| I2S_MCLK | E77→WM8960 | 主时钟 |
-| I2S_BCLK | E77→WM8960 | 位时钟 |
-| I2S_LRCLK | E77→WM8960 | 左右声道时钟 |
-| I2S_SD | E77→WM8960 | 串行数据输出 |
-| ADCLRC | WM8960→E77 | ADC 数据时钟 |
+| 网络 | MCU 引脚 | 方向 | 功能 |
+|------|---------|------|------|
+| I2S_MCLK | PA3 (TIM2_CH4) | E77→WM8960 pin11 | 主时钟 2.286MHz (PWM, 非 I2S2_MCK) |
+| I2S_BCLK | PA8 (I2S2_CK) | 录: WM8960→E77 / 放: E77→WM8960 pin12 | 位时钟 |
+| I2S_LRCLK | PA9 (I2S2_WS) | 同上 pin13 (DACLRC) | 帧时钟 |
+| I2S_SD | PA10 (I2S2_SD) | **半双工共线** pin14+16 | 录音 ADCDAT→MCU / 播放 MCU→DACDAT |
+| ADCLRC | — (PCB 浮空) | — | WM8960 pin15 未接 MCU；固件 R9 ALRCGPIO=1 |
+
+> 录音时 WM8960 当 I2S 主、STM32 当从；播放时相反。详见 `firmware/src/audio_wm8960.c`。
 
 ## 控制总线 (I2C)
 

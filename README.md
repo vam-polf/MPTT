@@ -1,32 +1,48 @@
 # MPTT — Mini Push To Talk
 
 > LoRa 对讲机 v0.1 | STM32WLE5 + WM8960 | 2层 FR-4 35×55mm
-> 作者: vam-polf | 2026-06-07
 
-## 项目简介
-
-MPTT (Mini Push To Talk) 是一款基于 E77-400M22S (STM32WLE5) 和 WM8960 音频 Codec 的 LoRa 手持对讲机。单节锂电池供电，USB-C 充电，SMA 外接天线。
+基于 E77-400M22S (STM32WLE5) 和 WM8960 音频 Codec 的 LoRa 手持对讲机。单节锂电池供电，USB-C 充电，SMA 外接天线。
 
 ## 目录结构
 
 ```
-hardware/                         ← 硬件设计
-├── lora_waikie_2026-06-05.epro2 EasyEDA Pro 工程文件
-├── mptt_schematic_v0.1.pdf      原理图 PDF 导出
-├── BOM.md                        物料清单 (53项)
-├── SCHEMATIC.md                  原理图模块说明
-├── PCB.md                        PCB 布局说明
-└── NETLIST.md                    网络连接表 (40网络)
-
-docs/                             ← 设计文档
-└── DESIGN_v0.1.md                v0.1 完整硬件设计文档 (10章)
-
-reference/datasheets/             ← 芯片数据手册
-├── E77-400MBL-01-PIN.xlsx
-├── E77-xxxM22S_Usermanual_CN_V1.4.pdf
-├── STM32WLE5.xlsx
-└── STM32WLE5XX.pdf
+mptt/
+├── README.md                 本文件
+├── docs/                     设计文档 (见 docs/README.md)
+├── hardware/                 硬件设计 (原理图、BOM、PCB、EasyEDA 工程)
+├── reference/datasheets/     芯片数据手册
+└── firmware/                 固件
+    ├── build.bat             构建主固件 (Windows)
+    ├── Makefile              构建 / 烧录快捷入口
+    ├── link.ld               链接脚本
+    ├── startup.c             启动代码
+    ├── include/              头文件
+    │   ├── stm32wle5xx.h     MCU 寄存器定义
+    │   └── audio_wm8960.h    音频驱动 API
+    ├── src/                  源代码
+    │   ├── main.c            应用层 (PTT 状态机 + DSP 后处理)
+    │   └── audio_wm8960.c    音频底层 (MCLK/I2C/I2S/WM8960, 已冻结)
+    ├── tools/                调试 / 验证脚本 (pyocd)
+    │   ├── selftest.py       自动验证 (模拟 PTT, 无需人工)
+    │   ├── readproc.py       读取处理后缓冲 → WAV
+    │   ├── readdiag.py       读取 DIAG 诊断区
+    │   └── ...
+    └── build/                构建产物 (gitignore)
+        ├── fw.elf
+        └── fw.bin
 ```
+
+## 固件快速开始
+
+```bat
+cd firmware
+build.bat
+pyocd flash -t stm32wle5cbux build\fw.bin
+python tools\selftest.py
+```
+
+音频底层配置与调试知识库见 `D:\kb\wm8960\mptt-从零调试实战手册.md`。
 
 ## 核心器件
 
@@ -40,9 +56,8 @@ reference/datasheets/             ← 芯片数据手册
 
 ## 设计工具
 
-- **EDA**: 立创EDA专业版 V3.2.121
-- **PCB 生产**: JLCPCB (2层 FR-4, 35×55mm)
-- **SMT 贴片**: JLCPCB 标准型 (只贴顶层)
+- **EDA**: 立创EDA专业版
+- **PCB**: JLCPCB 2层 FR-4, 35×55mm
 
 ## 许可证
 

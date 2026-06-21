@@ -59,7 +59,7 @@ MPTT v0.1 是一款基于 STM32WLE5 的 LoRa 手持对讲机。单节锂电池�
                         │     STM32WLE5 + SX1262 RF Frontend    │
                         │                                      │
                         │  ┌─────────────────────────────────┐ │
-   PTT Button (SW1) ───┼──► PB0 (GPIO)                       │ │
+   PTT Button (SW1) ───┼──► PB8 (GPIO)                       │ │
                         │  │                                  │ │
    Battery ADC ────────┼──► PA0 (ADC)                        │ │
                         │  │                                  │ │
@@ -103,14 +103,16 @@ MPTT v0.1 是一款基于 STM32WLE5 的 LoRa 手持对讲机。单节锂电池�
 
 ### 3.2 引脚分配
 
-#### I2S 音频接口
+#### I2S 音频接口 (SPI2/I2S2 + TIM2 MCLK)
 
 | E77 引脚 | STM32 功能 | 连接目标 | 说明 |
 |---------|-----------|---------|------|
-| 8 | PA4 (I2S1_WS) | WM8960 ADCLRC | ADC 字时钟 |
-| 9 | PA5 (I2S1_CK) | WM8960 I2S_BCLK | I2S 位时钟 |
-| 10 | PA6 (I2S1_SD) | WM8960 I2S_SD | I2S 数据输出 (MCU→Codec) |
-| 11 | PA7 (I2S1_MCK) | WM8960 I2S_MCLK | 主时钟 |
+| — | PA3 (TIM2_CH4, AF1) | WM8960 MCLK (pin11) | PWM 2.286MHz（非 I2S2_MCK AF5，该脚无输出） |
+| — | PA8 (I2S2_CK, AF5) | WM8960 BCLK (pin12) | 位时钟 |
+| — | PA9 (I2S2_WS, AF3) | WM8960 DACLRC (pin13) | 帧时钟 |
+| — | PA10 (I2S2_SD, AF5) | WM8960 DACDAT+ADCDAT (pin14/16) | 半双工共线 |
+
+> ⚠️ 早期草案写 I2S1 (PA4–PA7)，**实际 PCB v0.1 与 bringup 固件均用 I2S2 上表引脚**。
 
 #### I2C 控制接口
 
@@ -124,7 +126,7 @@ MPTT v0.1 是一款基于 STM32WLE5 的 LoRa 手持对讲机。单节锂电池�
 | E77 引脚 | 功能 | 连接目标 | 说明 |
 |---------|------|---------|------|
 | 1 | NRST | J4 (SWD) + R19上拉 | 系统复位, 100kΩ 上拉到 +3.3V |
-| 18 | PB0 | SW1 (PTT) + R12下拉 | 对讲按键, 4.7kΩ 下拉 |
+| — | PB8 | SW1 (PTT) | 对讲按键，上拉输入，按下=低（E77 pin 6，见 `firmware/src/main.c`） |
 | 16 | PA0 (ADC) | BAT_ADC (R20分压) | 电池电压检测, 100kΩ分压 |
 
 #### SWD 调试
@@ -175,18 +177,19 @@ RX路径 (接收):
 
 | WM8960 引脚 | 信号 | 连接 |
 |-----------|------|------|
-| 13 | ADCLRC | E77 PA4 (I2S1_WS) |
-| 14 | DACLRC | E77 PA7 (I2S1_MCK) — 复用为 LRC |
-| 15 | BCLK | E77 PA5 (I2S1_CK) |
-| 16 | ADCDAT | E77 PA6 (I2S1_SD) |
-| 17 | DACDAT | E77 PA7 — 双向数据 |
+| 11 | MCLK | E77 PA3 (TIM2_CH4 PWM, 2.286MHz) |
+| 12 | BCLK | E77 PA8 (I2S2_CK) |
+| 13 | DACLRC | E77 PA9 (I2S2_WS) |
+| 14 | DACDAT | E77 PA10 (I2S2_SD) |
+| 15 | ADCLRC | **浮空**（固件设 R9 ALRCGPIO=1，ADC 内部跟 DACLRC） |
+| 16 | ADCDAT | E77 PA10 — 与 DACDAT **短接半双工** |
 
 #### I2C 控制
 
 | WM8960 引脚 | 连接 |
 |-----------|------|
-| 19 (SCLK) | E77 PB6 (I2C1_SCL) |
-| 20 (SDIN) | E77 PB7 (I2C1_SDA) |
+| 29 (SCLK) | E77 PB6 (I2C1_SCL) |
+| 30 (SDIN) | E77 PB7 (I2C1_SDA) |
 
 I2C 地址: 0x1A (7-bit, CSB=GND)
 
@@ -367,9 +370,9 @@ ZH 1.5mm 1×2P 立贴:
 ### 6.7 PTT 按键 (SW1)
 
 - 型号: TS-1187A-B-A-B (5.1×5.1×1.5mm 立贴)
-- 连接: PB0 → SW1 → GND
-- 内部上拉: E77 PB0 内置弱上拉
-- 外部下拉: R12 (4.7kΩ) 确保默认低电平
+- 连接: **PB8** → SW1 → GND（按下拉低）
+- 固件: 内部上拉，松开=高、按下=低
+- 说明: 部分早期原理图草稿写 PB0；**当前 bringup 板与固件使用 PB8**
 
 ### 6.8 电池电压检测
 
@@ -546,4 +549,5 @@ BAT+ ── C4(22μF)  ← TP4056 输入
 
 ---
 
-> **文档版本**: v0.1 | **作者**: vam-polf | **日期**: 2026-06-07
+> **文档版本**: v0.1 | **作者**: vam-polf | **日期**: 2026-06-07  
+> **修订**: 2026-06-21 — 更正 I2S2 引脚(PA3/8/9/10)、WM8960 引脚号、PTT=PB8，与实测 bringup 一致

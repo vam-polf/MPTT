@@ -1,8 +1,9 @@
-# OS files
+# OS
 Thumbs.db
 .DS_Store
 ~$*
 *.lck
+nul
 
 # Build outputs
 firmware/build/
@@ -11,29 +12,25 @@ firmware/build/
 *.bin
 *.hex
 *.map
+*.dis
 
-# Backup directories
-firmware_backup_*/
+# Tool-generated captures (WAV / analysis output)
+firmware/tools/output/
+*.wav
 
-# IDE and editor files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Compiled Python files
+# Python
 __pycache__/
 *.pyc
 *.pyo
 
-# Logs
+# Logs / temp
 *.log
-
-# Temporary files
 *.tmp
 *.temp
-.gitignore.backup
-
-# Test firmware
-firmware_test/

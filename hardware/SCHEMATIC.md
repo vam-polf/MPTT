@@ -16,7 +16,7 @@ STM32WLE5 内置 LoRa 射频的单片机模组。负责:
 关键引脚连接:
 - PA3(TIM2_CH4 MCLK)/PA8(I2S2_CK)/PA9(I2S2_WS)/PA10(I2S2_SD) → I2S 到 WM8960
 - PB6/PB7 → I2C 到 WM8960
-- PB0 → PTT 按键
+- PB8 → PTT 按键（上拉，按下=低；固件见 `firmware/src/main.c`）
 - PA0 → BAT_ADC
 - PA13/PA14 → SWD (J4)
 
@@ -30,8 +30,9 @@ STM32WLE5 内置 LoRa 射频的单片机模组。负责:
 - MICBIAS → 驻极体偏置
 
 数字部分:
-- I2S 4线接口 (MCLK/BCLK/LRCLK/SD)
-- I2C 配置接口 (SCL/SDA)
+- I2S: MCLK(PA3) / BCLK(PA8) / LRCLK(PA9) / SD(PA10 半双工)
+- ADCLRC (WM8960 pin15): **PCB 浮空**，固件设 ALRCGPIO=1
+- I2C 配置接口 (PB6/PB7 → SCL/SDA)
 
 电源分组:
 - +3.3V_DVDD: 数字核心
